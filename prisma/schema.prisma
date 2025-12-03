@@ -1,0 +1,231 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // можешь поменять на "mysql" позже
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String   // bcrypt hash
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id                   Int      @id @default(autoincrement())
+  slug_ru              String   @unique
+  slug_uz              String   @unique
+  title_ru             String
+  title_uz             String
+  short_description_ru String
+  short_description_uz String
+  content_ru           String   // markdown / richtext
+  content_uz           String
+  problem_ru           String?
+  problem_uz           String?
+  solution_ru          String?
+  solution_uz          String?
+  result_ru            String?
+  result_uz            String?
+  fit_ru               String?
+  fit_uz               String?
+  icon                 String?  // путь к иконке
+
+  // SEO
+  meta_title_ru        String?
+  meta_title_uz        String?
+  meta_description_ru  String?
+  meta_description_uz  String?
+  meta_keywords_ru     String?
+  meta_keywords_uz     String?
+  canonical_url        String?
+  og_title_ru          String?
+  og_title_uz          String?
+  og_description_ru    String?
+  og_description_uz    String?
+  og_image             String?
+  index                Boolean  @default(true)
+  sitemap_priority     Float?   @default(0.8)
+  sitemap_changefreq   String?  @default("monthly")
+
+  cases      Case[]   @relation("ServiceCases")
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([slug_ru])
+  @@index([slug_uz])
+}
+
+model Case {
+  id                  Int      @id @default(autoincrement())
+  client_name         String
+  industry            String
+  slug_ru             String   @unique
+  slug_uz             String   @unique
+  title_ru            String
+  title_uz            String
+  description_ru      String?
+  description_uz      String?
+
+  problem_ru          String
+  problem_uz          String
+  solution_ru         String
+  solution_uz         String
+  result_ru           String
+  result_uz           String
+
+  screenshots         String?
+  launch_date         DateTime?
+
+  service   Service? @relation("ServiceCases", fields: [serviceId], references: [id])
+  serviceId Int?
+
+  meta_title_ru       String?
+  meta_title_uz       String?
+  meta_description_ru String?
+  meta_description_uz String?
+  meta_keywords_ru    String?
+  meta_keywords_uz    String?
+  canonical_url       String?
+  og_title_ru         String?
+  og_title_uz         String?
+  og_description_ru   String?
+  og_description_uz   String?
+  og_image            String?
+  index               Boolean  @default(true)
+  sitemap_priority    Float?   @default(0.6)
+  sitemap_changefreq  String?  @default("monthly")
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([slug_ru])
+  @@index([slug_uz])
+  @@index([industry])
+}
+
+model Category {
+  id                  Int      @id @default(autoincrement())
+  slug_ru             String   @unique
+  slug_uz             String   @unique
+  name_ru             String
+  name_uz             String
+  description_ru      String?
+  description_uz      String?
+
+  meta_title_ru       String?
+  meta_title_uz       String?
+  meta_description_ru String?
+  meta_description_uz String?
+  canonical_url       String?
+  og_title_ru         String?
+  og_title_uz         String?
+  og_description_ru   String?
+  og_description_uz   String?
+  og_image            String?
+  index               Boolean  @default(true)
+  sitemap_priority    Float?   @default(0.5)
+  sitemap_changefreq  String?  @default("monthly")
+
+  posts               Post[]
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([slug_ru])
+  @@index([slug_uz])
+}
+
+model Post {
+  id                  Int      @id @default(autoincrement())
+  slug_ru             String   @unique
+  slug_uz             String   @unique
+  title_ru            String
+  title_uz            String
+  excerpt_ru          String
+  excerpt_uz          String
+  content_ru          String
+  content_uz          String
+  tags                String?
+  published_at        DateTime?
+  is_published        Boolean  @default(false)
+
+  // связь с Category — через categoryId
+  categoryId Int?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  meta_title_ru       String?
+  meta_title_uz       String?
+  meta_description_ru String?
+  meta_description_uz String?
+  canonical_url       String?
+  og_title_ru         String?
+  og_title_uz         String?
+  og_description_ru   String?
+  og_description_uz   String?
+  og_image            String?
+  index               Boolean  @default(true)
+  sitemap_priority    Float?   @default(0.7)
+  sitemap_changefreq  String?  @default("weekly")
+  meta_keywords_ru    String?
+  meta_keywords_uz    String?
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([slug_ru])
+  @@index([slug_uz])
+  @@index([is_published, published_at])
+}
+
+model Review {
+  id          Int      @id @default(autoincrement())
+  client_name String
+  position    String?
+  company     String?
+  text_ru     String
+  text_uz     String
+  rating      Int      @default(5)
+  avatar      String?
+  is_featured Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([is_featured])
+}
+
+model SiteSettings {
+  id                    Int      @id @default(1)
+  company_name          String
+  logo                  String?
+  favicon               String?
+  phone                 String?
+  address               String?
+  email                 String?
+  telegram_url          String?
+  whatsapp_url          String?
+  instagram_url         String?
+  facebook_url          String?
+  linkedin_url          String?
+
+  default_meta_title_ru String?
+  default_meta_title_uz String?
+  default_meta_desc_ru  String?
+  default_meta_desc_uz  String?
+  default_og_image      String?
+
+  analytics_head        String? // скрипты в <head>
+  analytics_body        String? // скрипты в <body>
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
