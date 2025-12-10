@@ -3,9 +3,6 @@ import { isLocale, type Locale } from "@/lib/i18n";
 import Image from "next/image";
 import type { Metadata } from "next";
 
-// Revalidate services listing every 10 minutes
-export const revalidate = 600;
-
 export async function generateMetadata({
   params,
 }: {

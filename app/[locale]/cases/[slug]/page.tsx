@@ -4,9 +4,6 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import type { Metadata, ResolvingMetadata } from "next";
 
-// Revalidate individual case pages every 60 minutes
-export const revalidate = 3600;
-
 export async function generateStaticParams() {
   const cases = await prisma.case.findMany({
     select: { slug_ru: true, slug_uz: true },

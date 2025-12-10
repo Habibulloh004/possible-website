@@ -2,9 +2,6 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 
-// Revalidate locale home every 5 minutes
-export const revalidate = 300;
-
 type Locale = "ru" | "uz";
 
 // --- SEO: metadata for locale home page ---

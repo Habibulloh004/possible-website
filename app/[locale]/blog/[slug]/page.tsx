@@ -4,9 +4,6 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Image from "next/image";
 
-// Revalidate individual blog posts every 60 minutes
-export const revalidate = 3600;
-
 export async function generateStaticParams() {
   const posts = await prisma.post.findMany({
     where: { is_published: true },

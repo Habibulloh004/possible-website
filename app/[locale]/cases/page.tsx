@@ -3,9 +3,6 @@ import { isLocale, type Locale } from "@/lib/i18n";
 import Image from "next/image";
 import type { Metadata } from "next";
 
-// Revalidate cases listing every 10 minutes
-export const revalidate = 600;
-
 const BASE_URL = "https://possible.uz";
 
 // SEO metadata for /[locale]/cases

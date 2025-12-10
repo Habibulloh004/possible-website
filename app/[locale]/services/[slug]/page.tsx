@@ -4,9 +4,6 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import type { Metadata } from "next";
 
-// Revalidate individual service pages every 60 minutes
-export const revalidate = 3600;
-
 export async function generateStaticParams() {
   const services = await prisma.service.findMany({
     select: { slug_ru: true, slug_uz: true },
