@@ -4,7 +4,19 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+// Revalidate individual service pages every 60 minutes
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const services = await prisma.service.findMany({
+    select: { slug_ru: true, slug_uz: true },
+  });
+
+  return services.flatMap((service) => [
+    { locale: "ru", slug: service.slug_ru },
+    { locale: "uz", slug: service.slug_uz },
+  ]);
+}
 
 export async function generateMetadata({
   params,
@@ -180,7 +192,7 @@ export default async function ServicePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
       {/* Фоновые градиенты */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute -left-40 top-0 h-64 w-64 rounded-full bg-cyan-500/25 blur-3xl" />
         <div className="absolute right-0 top-40 h-72 w-72 rounded-full bg-purple-500/25 blur-3xl" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black via-black/60 to-transparent" />

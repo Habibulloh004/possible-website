@@ -3,7 +3,8 @@ import { isLocale, type Locale } from "@/lib/i18n";
 import Image from "next/image";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+// Revalidate cases listing every 10 minutes
+export const revalidate = 600;
 
 const BASE_URL = "https://possible.uz";
 
@@ -167,7 +168,7 @@ export default async function CasesPage({
       />
 
       {/* фоновые акценты */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute -left-16 top-10 h-56 w-56 rounded-full bg-emerald-500/20 blur-3xl" />
         <div className="absolute right-0 top-72 h-72 w-72 rounded-full bg-indigo-500/25 blur-3xl" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent" />

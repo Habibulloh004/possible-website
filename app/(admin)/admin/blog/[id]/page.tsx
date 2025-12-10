@@ -124,6 +124,15 @@ async function savePost(formData: FormData) {
     });
   }
 
+  // Revalidate public pages that depend on blog posts
+  revalidatePath("/ru/blog");
+  revalidatePath("/uz/blog");
+  revalidatePath(`/ru/blog/${slug_ru}`);
+  revalidatePath(`/uz/blog/${slug_uz}`);
+  revalidatePath("/ru");
+  revalidatePath("/uz");
+  revalidatePath("/sitemap.xml");
+
   revalidatePath("/admin/blog");
   redirect("/admin/blog");
 }

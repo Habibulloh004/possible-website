@@ -1,10 +1,13 @@
 // app/(admin)/admin/page.tsx
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
+  // Require authentication
+  await requireAdmin();
   // Базовая статистика контента
   let servicesCount = 0;
   let casesCount = 0;

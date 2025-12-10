@@ -4,7 +4,20 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Image from "next/image";
 
-export const dynamic = "force-dynamic";
+// Revalidate individual blog posts every 60 minutes
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const posts = await prisma.post.findMany({
+    where: { is_published: true },
+    select: { slug_ru: true, slug_uz: true },
+  });
+
+  return posts.flatMap((post) => [
+    { locale: "ru", slug: post.slug_ru },
+    { locale: "uz", slug: post.slug_uz },
+  ]);
+}
 
 async function getPostBySlug(locale: Locale, slug: string) {
   const post = await prisma.post.findFirst({
@@ -127,7 +140,7 @@ export default async function PostPage({
   return (
     <div className="relative mx-auto max-w-5xl px-4 py-10 space-y-10">
       {/* Фоновая подсветка */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute -left-24 top-10 h-64 w-64 rounded-full bg-sky-500/25 blur-3xl" />
         <div className="absolute right-0 top-80 h-72 w-72 rounded-full bg-fuchsia-500/25 blur-3xl" />
       </div>

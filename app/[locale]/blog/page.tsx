@@ -3,7 +3,8 @@ import { isLocale, type Locale } from "@/lib/i18n";
 import Image from "next/image";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+// Revalidate blog listing every 10 minutes
+export const revalidate = 600;
 
 // SEO metadata
 export async function generateMetadata({
@@ -171,7 +172,7 @@ export default async function BlogPage({
   return (
     <div className="relative mx-auto max-w-6xl px-4 py-10 space-y-8">
       {/* background glow */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute -left-24 top-4 h-64 w-64 rounded-full bg-sky-500/20 blur-3xl" />
         <div className="absolute right-10 top-40 h-72 w-72 rounded-full bg-fuchsia-500/20 blur-3xl" />
         <div className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-emerald-500/16 blur-3xl" />

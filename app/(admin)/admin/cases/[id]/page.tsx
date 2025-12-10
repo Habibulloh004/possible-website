@@ -137,7 +137,7 @@ export default async function CaseEditPage({ params }: Props) {
     const sitemap_changefreq =
       formData.get("sitemap_changefreq")?.toString() || "monthly";
 
-    const data = {
+  const data = {
       client_name,
       industry,
       slug_ru,
@@ -178,6 +178,19 @@ export default async function CaseEditPage({ params }: Props) {
           where: { id: caseId as number },
           data,
         });
+
+    // Revalidate public pages that depend on cases
+    revalidatePath("/ru/cases");
+    revalidatePath("/uz/cases");
+    if (saved.slug_ru) {
+      revalidatePath(`/ru/cases/${saved.slug_ru}`);
+    }
+    if (saved.slug_uz) {
+      revalidatePath(`/uz/cases/${saved.slug_uz}`);
+    }
+    revalidatePath("/ru");
+    revalidatePath("/uz");
+    revalidatePath("/sitemap.xml");
 
     revalidatePath("/admin/cases");
     redirect("/admin/cases");

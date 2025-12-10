@@ -2,7 +2,8 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
+// Revalidate locale home every 5 minutes
+export const revalidate = 300;
 
 type Locale = "ru" | "uz";
 
@@ -395,7 +396,7 @@ export default async function LocaleHomePage({
   ];
 
   return (
-    <main className="relative mx-auto max-w-6xl px-4 pb-16 pt-10 space-y-16">
+    <main className="relative mx-auto max-w-6xl px-4 pb-16 pt-10 space-y-16 [&>:nth-child(2)]:!mt-0">
       {/* JSON-LD structured data for SEO */}
       <script
         type="application/ld+json"
@@ -403,13 +404,13 @@ export default async function LocaleHomePage({
         suppressHydrationWarning
       />
       {/* фоновые \"огни\" */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute -left-32 top-0 h-64 w-64 rounded-full bg-cyan-500/25 blur-3xl" />
         <div className="absolute right-0 top-40 h-72 w-72 rounded-full bg-purple-500/30 blur-3xl" />
       </div>
 
       {/* HERO с фото */}
-      <section className="grid items-center gap-10 lg:grid-cols-[1.6fr,1.2fr]">
+      <section className="grid items-center gap-10 lg:grid-cols-[1.6fr,1.2fr] mt-0">
         <div>
           <p className="mb-3 text-xs uppercase tracking-[0.3em] text-neutral-500">
             {t.hero.kicker}

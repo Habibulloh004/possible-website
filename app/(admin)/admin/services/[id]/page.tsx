@@ -123,6 +123,15 @@ async function saveService(formData: FormData) {
     await prisma.service.create({ data });
   }
 
+  // Revalidate public pages that depend on services
+  revalidatePath("/ru/services");
+  revalidatePath("/uz/services");
+  revalidatePath(`/ru/services/${slug_ru}`);
+  revalidatePath(`/uz/services/${slug_uz}`);
+  revalidatePath("/ru");
+  revalidatePath("/uz");
+  revalidatePath("/sitemap.xml");
+
   revalidatePath("/admin/services");
   redirect("/admin/services");
 }

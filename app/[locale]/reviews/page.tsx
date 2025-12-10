@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { isLocale, type Locale } from "@/lib/i18n";
 
+// Revalidate reviews page every 10 minutes
+export const revalidate = 600;
+
 // --- Dynamic SEO metadata with Prisma (aggregate rating, defaults, hreflang) ---
 export async function generateMetadata({ params }: { params: { locale: string } }) {
   const locale: "ru" | "uz" = params.locale === "uz" ? "uz" : "ru";
@@ -78,8 +81,6 @@ export async function generateMetadata({ params }: { params: { locale: string } 
     },
   };
 }
-
-export const dynamic = "force-dynamic";
 
 export default async function ReviewsPage({
   params,
@@ -180,7 +181,7 @@ export default async function ReviewsPage({
 
       <div className="relative mx-auto max-w-6xl px-4 py-12 space-y-10">
         {/* фоновые свечения */}
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="pointer-events-none fixed inset-0 -z-10">
           <div className="absolute -left-24 top-10 h-64 w-64 rounded-full bg-amber-500/18 blur-3xl" />
           <div className="absolute right-0 top-64 h-72 w-72 rounded-full bg-rose-500/18 blur-3xl" />
           <div className="absolute -right-32 bottom-0 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />

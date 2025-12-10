@@ -88,6 +88,13 @@ export default async function ReviewEditPage({ params }: Props) {
       });
     }
 
+    // Revalidate public pages that depend on reviews
+    revalidatePath("/ru/reviews");
+    revalidatePath("/uz/reviews");
+    revalidatePath("/ru");
+    revalidatePath("/uz");
+    revalidatePath("/sitemap.xml");
+
     revalidatePath("/admin/reviews");
     redirect("/admin/reviews");
   }

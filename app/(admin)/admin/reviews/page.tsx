@@ -1,16 +1,19 @@
 
 
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminReviewsPage() {
+  await requireAdmin();
+
   const reviews = await prisma.review.findMany({
     orderBy: { createdAt: "desc" },
   });
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-7xl w-full space-y-6 p-6">
       {/* Header */}
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
@@ -23,78 +26,84 @@ export default async function AdminReviewsPage() {
 
         <a
           href="/admin/reviews/new"
-          className="inline-flex items-center rounded-full bg-white px-4 py-2 text-xs font-semibold text-black shadow hover:bg-neutral-100"
+          className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-black shadow-lg shadow-white/20 hover:bg-neutral-100 transition-all"
         >
-          + Добавить отзыв
+          <span className="text-lg leading-none">＋</span>
+          <span>Добавить отзыв</span>
         </a>
       </header>
 
       {/* Table */}
-      <section className="rounded-3xl border border-white/10 bg-neutral-950/80 p-4 md:p-5">
+      <section className="overflow-hidden rounded-3xl border border-white/10 bg-neutral-950/80 backdrop-blur-xl">
         {reviews.length === 0 ? (
-          <p className="text-sm text-neutral-500">
-            Отзывов пока нет. Добавь первые кейсовые отзывы клиентов, с которыми
-            вы уже сделали проекты.
-          </p>
+          <div className="px-6 py-16 text-center text-sm text-neutral-400">
+            Отзывов пока нет.{" "}
+            <a
+              href="/admin/reviews/new"
+              className="text-cyan-400 underline underline-offset-2 hover:text-cyan-300"
+            >
+              Добавь первый отзыв →
+            </a>
+          </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-xs md:text-sm">
-              <thead className="border-b border-white/10 text-[11px] uppercase tracking-[0.16em] text-neutral-500">
+            <table className="min-w-full text-left text-sm">
+              <thead className="border-b border-white/10 bg-neutral-900/60 text-[11px] uppercase tracking-[0.16em] text-neutral-400">
                 <tr>
-                  <th className="py-2 pr-3">ID</th>
-                  <th className="py-2 pr-3">Клиент</th>
-                  <th className="py-2 pr-3">Компания</th>
-                  <th className="py-2 pr-3">Оценка</th>
-                  <th className="py-2 pr-3">Витрина</th>
-                  <th className="py-2 pr-3 hidden md:table-cell">Создан</th>
-                  <th className="py-2 pl-3 text-right">Действия</th>
+                  <th className="px-6 py-4">ID</th>
+                  <th className="px-6 py-4">Клиент</th>
+                  <th className="px-6 py-4">Компания</th>
+                  <th className="px-6 py-4">Оценка</th>
+                  <th className="px-6 py-4">Витрина</th>
+                  <th className="px-6 py-4">Создан</th>
+                  <th className="px-6 py-4 text-right">Действия</th>
                 </tr>
               </thead>
               <tbody>
                 {reviews.map((r) => (
                   <tr
                     key={r.id}
-                    className="border-b border-white/5 text-[11px] md:text-xs hover:bg-white/5"
+                    className="border-b border-white/5 transition hover:bg-neutral-900/40"
                   >
-                    <td className="py-2 pr-3 align-middle text-neutral-300">
+                    <td className="px-6 py-4 align-middle text-neutral-400">
                       {r.id}
                     </td>
-                    <td className="py-2 pr-3 align-middle">
+                    <td className="px-6 py-4 align-middle">
                       <div className="flex flex-col">
-                        <span className="text-neutral-100">{r.client_name}</span>
+                        <span className="font-medium text-white">{r.client_name}</span>
                         {r.position && (
-                          <span className="text-[10px] text-neutral-500">
+                          <span className="text-xs text-neutral-500 mt-0.5">
                             {r.position}
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="py-2 pr-3 align-middle text-neutral-300">
+                    <td className="px-6 py-4 align-middle text-neutral-300">
                       {r.company || "—"}
                     </td>
-                    <td className="py-2 pr-3 align-middle">
-                      <span className="rounded-full border border-amber-400/40 bg-amber-500/10 px-2 py-0.5 text-[10px] text-amber-100">
+                    <td className="px-6 py-4 align-middle">
+                      <span className="inline-flex items-center rounded-full border border-amber-400/40 bg-amber-500/10 px-2.5 py-1 text-xs text-amber-100">
                         {r.rating} / 5
                       </span>
                     </td>
-                    <td className="py-2 pr-3 align-middle">
+                    <td className="px-6 py-4 align-middle">
                       {r.is_featured ? (
-                        <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-200">
+                        <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-300 ring-1 ring-emerald-500/40">
                           На главной
                         </span>
                       ) : (
-                        <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-[10px] text-neutral-300">
+                        <span className="inline-flex items-center rounded-full bg-neutral-800/80 px-2.5 py-1 text-xs text-neutral-400">
                           Обычный
                         </span>
                       )}
                     </td>
-                    <td className="py-2 pr-3 align-middle text-neutral-500 hidden md:table-cell">
+                    <td className="px-6 py-4 align-middle text-xs text-neutral-500">
                       {new Date(r.createdAt).toLocaleDateString("ru-RU")}
                     </td>
-                    <td className="py-2 pl-3 align-middle text-right">
+                    <td className="px-6 py-4 align-middle text-right">
                       <a
                         href={`/admin/reviews/${r.id}`}
-                        className="text-[11px] font-medium text-sky-300 hover:text-sky-200"
+                        className="text-xs font-medium text-cyan-400 underline underline-offset-2 hover:text-cyan-300 transition-colors"
                       >
                         Редактировать
                       </a>

@@ -4,7 +4,19 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import type { Metadata, ResolvingMetadata } from "next";
 
-export const dynamic = "force-dynamic";
+// Revalidate individual case pages every 60 minutes
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const cases = await prisma.case.findMany({
+    select: { slug_ru: true, slug_uz: true },
+  });
+
+  return cases.flatMap((c) => [
+    { locale: "ru", slug: c.slug_ru },
+    { locale: "uz", slug: c.slug_uz },
+  ]);
+}
 
 // SEO: generateMetadata для кейса
 export async function generateMetadata(
@@ -132,7 +144,7 @@ export default async function CasePage({
   return (
     <div className="relative mx-auto max-w-6xl px-4 py-14 space-y-12">
       {/* фоновые акценты */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute -left-24 top-8 h-64 w-64 rounded-full bg-emerald-500/25 blur-3xl" />
         <div className="absolute right-0 top-80 h-72 w-72 rounded-full bg-sky-500/20 blur-3xl" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent" />

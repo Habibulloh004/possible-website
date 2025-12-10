@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { PasswordChangeForm } from "@/components/admin/PasswordChangeForm";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -96,6 +98,9 @@ export default async function AdminSettingsPage({
 }: {
   searchParams?: { saved?: string };
 }) {
+  // Require authentication
+  await requireAdmin();
+
   const settings = await getSettings();
   const isSaved = searchParams?.saved === "1";
 
@@ -150,6 +155,9 @@ export default async function AdminSettingsPage({
           </p>
         </div>
       </header>
+
+      {/* Password Change Section */}
+      <PasswordChangeForm />
 
       <form action={saveSettings} className="space-y-6">
         {/* Бренд и контакты */}
