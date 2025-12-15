@@ -432,15 +432,7 @@ export default async function LocaleHomePage({
               target="_blank"
             >
               Telegram
-            </a>
-            <a
-              href="https://wa.me/"
-              className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-6 py-2 text-sm text-emerald-100 backdrop-blur hover:border-emerald-300"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              WhatsApp
-            </a>
+            </a>http://localhost:3000/admin/dashboard
           </div>
           <dl className="mt-8 grid max-w-xl grid-cols-3 gap-4 text-xs text-neutral-400">
             {t.hero.stats.map((s) => (
