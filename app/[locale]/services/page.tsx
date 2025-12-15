@@ -154,7 +154,7 @@ export default async function ServicesPage({
   };
 
   return (
-    <main className="relative mx-auto max-w-6xl px-4 pb-16 pt-10 space-y-10">
+    <main className="relative mx-auto max-w-6xl px-4 pb-16 space-y-10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -176,7 +176,7 @@ export default async function ReviewsPage({
         dangerouslySetInnerHTML={{ __html: ldJson }}
       />
 
-      <div className="relative mx-auto max-w-6xl px-4 py-12 space-y-10">
+      <div className="relative mx-auto top-0 left-0 max-w-6xl px-4 pb-12 space-y-10">
         {/* фоновые свечения */}
         <div className="pointer-events-none fixed inset-0 -z-10">
           <div className="absolute -left-24 top-10 h-64 w-64 rounded-full bg-amber-500/18 blur-3xl" />

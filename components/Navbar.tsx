@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 interface NavItem {
   href: string;
@@ -41,20 +42,26 @@ export default function Navbar() {
     return `/${targetLocale}`;
   };
 
-
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/10">
       <nav className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-4">
         {/* ЛОГО */}
         <Link
           href={`/${locale}`}
-          className="text-white font-semibold text-lg tracking-tight"
+          className="text-white font-semibold text-lg tracking-tight w-40"
         >
-          POSSIBLE GROUP
+          <Image
+            src={"/strokeLogo.png"}
+            alt={"Logo"}
+            // fill
+            width={70}
+            height={70}
+            className="object-contain"
+          />
         </Link>
 
         {/* DESKTOP MENU */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-6">
           {nav.map((item) => (
             <Link
               key={item.href}
@@ -108,7 +115,7 @@ export default function Navbar() {
 
         {/* MOBILE BURGER */}
         <button
-          className="md:hidden text-white text-2xl"
+          className="lg:hidden text-white text-2xl"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >

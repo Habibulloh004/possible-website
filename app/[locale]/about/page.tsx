@@ -79,7 +79,7 @@ export default function AboutPage({
   const isRu = locale === "ru";
 
   return (
-    <div className="relative mx-auto max-w-6xl px-4 py-12 space-y-10">
+    <div className="relative mx-auto max-w-6xl px-4 pb-12 space-y-10">
       {/* Background glow */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute -left-32 top-0 h-72 w-72 rounded-full bg-cyan-500/25 blur-3xl" />

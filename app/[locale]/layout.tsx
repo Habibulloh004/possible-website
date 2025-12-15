@@ -1,5 +1,6 @@
 // app/[locale]/layout.tsx
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export function generateStaticParams() {
   return [{ locale: "ru" }, { locale: "uz" }];
@@ -15,6 +16,7 @@ export default function LocaleLayout({
     <>
       <Navbar />
       {children}
+      <Footer />
     </>
   );
 }

@@ -167,7 +167,7 @@ export default async function BlogPage({
   };
 
   return (
-    <div className="relative mx-auto max-w-6xl px-4 py-10 space-y-8">
+    <div className="relative mx-auto max-w-6xl px-4 pb-10 space-y-8">
       {/* background glow */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute -left-24 top-4 h-64 w-64 rounded-full bg-sky-500/20 blur-3xl" />

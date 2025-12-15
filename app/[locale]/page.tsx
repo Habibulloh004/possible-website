@@ -393,7 +393,7 @@ export default async function LocaleHomePage({
   ];
 
   return (
-    <main className="relative mx-auto max-w-6xl px-4 pb-16 pt-10 space-y-16 [&>:nth-child(2)]:!mt-0">
+    <main className="relative mx-auto max-w-6xl px-4 pb-16 space-y-16 [&>:nth-child(2)]:!mt-0 [&>:nth-child(3)]:!mt-8">
       {/* JSON-LD structured data for SEO */}
       <script
         type="application/ld+json"

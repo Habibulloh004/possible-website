@@ -5,6 +5,9 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Possible Group",
   description: "Автоматизация бизнеса, CRM, ERP, POS, интеграции",
+  icons: {
+    icon: "/logo.jpg",
+  },
 };
 
 export default function RootLayout({
@@ -20,4 +23,3 @@ export default function RootLayout({
     </html>
   );
 }
-

@@ -156,7 +156,7 @@ export default async function CasesPage({
   };
 
   return (
-    <div className="relative mx-auto max-w-6xl px-4 py-10 space-y-10">
+    <div className="relative mx-auto max-w-6xl px-4 pb-10 space-y-10">
       {/* JSON-LD для SEO */}
       <script
         type="application/ld+json"
