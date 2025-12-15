@@ -432,7 +432,7 @@ export default async function LocaleHomePage({
               target="_blank"
             >
               Telegram
-            </a>http://localhost:3000/admin/dashboard
+            </a>
           </div>
           <dl className="mt-8 grid max-w-xl grid-cols-3 gap-4 text-xs text-neutral-400">
             {t.hero.stats.map((s) => (
