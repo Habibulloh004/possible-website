@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { getPublicImageUrl } from "@/lib/images";
 
 type Props = {
   name: string;
@@ -10,7 +11,11 @@ type Props = {
 };
 
 export function ImageUploadField({ name, label, defaultValue }: Props) {
-  const [url, setUrl] = useState(defaultValue || "");
+  const initialValue = defaultValue || "";
+  const [url, setUrl] = useState(initialValue);
+  const [previewUrl, setPreviewUrl] = useState(
+    getPublicImageUrl(initialValue) || initialValue
+  );
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,6 +43,7 @@ export function ImageUploadField({ name, label, defaultValue }: Props) {
 
       const json = await res.json();
       setUrl(json.url); // /uploads/xxx.jpg
+      setPreviewUrl(json.publicUrl || json.url);
     } catch (err) {
       setError("Ошибка загрузки. Попробуй другой файл.");
     } finally {
@@ -66,10 +72,15 @@ export function ImageUploadField({ name, label, defaultValue }: Props) {
       )}
       {error && <p className="text-[11px] text-red-400">{error}</p>}
 
-      {url && (
+      {url && previewUrl && (
         <div className="mt-2 flex items-center gap-3">
           <div className="relative h-16 w-28 overflow-hidden rounded-lg border border-white/10 bg-black">
-            <Image src={url} alt="Превью" fill className="object-cover" />
+            <Image
+              src={previewUrl}
+              alt="Превью"
+              fill
+              className="object-cover"
+            />
           </div>
           <p className="break-all text-[11px] text-neutral-400">{url}</p>
         </div>

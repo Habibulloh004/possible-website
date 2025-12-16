@@ -3,6 +3,7 @@ import { isLocale, type Locale } from "@/lib/i18n";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Image from "next/image";
+import { getPublicImageUrl } from "@/lib/images";
 
 export async function generateStaticParams() {
   const posts = await prisma.post.findMany({
@@ -82,7 +83,8 @@ export async function generateMetadata({
     post.canonical_url ||
     `https://possible.uz/${locale}/blog/${isRu ? post.slug_ru : post.slug_uz}`;
 
-  const ogImage = post.og_image || undefined;
+  const ogImage =
+    getPublicImageUrl(post.og_image) || "https://possible.uz/og-default.png";
 
   return {
     title: metaTitle,
@@ -132,7 +134,8 @@ export default async function PostPage({
         .filter(Boolean)
     : [];
 
-  const hasCover = !!post.og_image;
+  const coverImage = getPublicImageUrl(post.og_image);
+  const hasCover = !!coverImage;
 
   return (
     <div className="relative mx-auto max-w-5xl px-4 py-10 space-y-10">
@@ -190,10 +193,10 @@ export default async function PostPage({
       </header>
 
       {/* Обложка статьи */}
-      {hasCover && (
+      {hasCover && coverImage && (
         <div className="relative h-56 w-full overflow-hidden rounded-3xl border border-white/10 bg-neutral-900 md:h-80">
           <Image
-            src={post.og_image as string}
+            src={coverImage}
             alt={title}
             fill
             className="object-cover"

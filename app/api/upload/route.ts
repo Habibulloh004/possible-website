@@ -1,28 +1,12 @@
 // app/api/upload/route.ts
 import { NextResponse } from "next/server";
-import { promises as fs, existsSync } from "fs";
+import { promises as fs } from "fs";
 import path from "path";
+import { getPublicImageUrl } from "@/lib/images";
+import { getUploadRoot } from "@/lib/uploads";
 
 export const runtime = "nodejs"; // нужен нормальный fs
-
-function findProjectRoot(startDir = process.cwd()) {
-  let currentDir = startDir;
-
-  while (true) {
-    if (existsSync(path.join(currentDir, "package.json"))) {
-      return currentDir;
-    }
-
-    const parentDir = path.dirname(currentDir);
-    if (parentDir === currentDir) {
-      return startDir;
-    }
-
-    currentDir = parentDir;
-  }
-}
-
-const uploadRoot = path.join(findProjectRoot(), "public", "uploads");
+const uploadRoot = getUploadRoot();
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -48,6 +32,8 @@ export async function POST(request: Request) {
   await fs.writeFile(filePath, buffer);
 
   const url = `/uploads/${fileName}`;
-
-  return NextResponse.json({ url });
+  return NextResponse.json({
+    url,
+    publicUrl: getPublicImageUrl(url) || url,
+  });
 }

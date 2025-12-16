@@ -3,6 +3,7 @@ import { isLocale, type Locale } from "@/lib/i18n";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { getPublicImageUrl } from "@/lib/images";
 
 export async function generateStaticParams() {
   const services = await prisma.service.findMany({
@@ -77,6 +78,11 @@ export async function generateMetadata({
     ? service.og_description_ru || metaDescription
     : service.og_description_uz || metaDescription;
 
+  const ogImage =
+    getPublicImageUrl(service.og_image) ||
+    getPublicImageUrl(settings?.default_og_image) ||
+    getPublicImageUrl("/og-default.png");
+
   return {
     title: metaTitle,
     description: metaDescription,
@@ -93,11 +99,7 @@ export async function generateMetadata({
       description: ogDescription,
       url: isRu ? ruUrl : uzUrl,
       siteName: settings?.company_name || "Possible Group",
-      images: service.og_image
-        ? [{ url: service.og_image }]
-        : settings?.default_og_image
-        ? [{ url: settings.default_og_image }]
-        : undefined,
+      images: ogImage ? [{ url: ogImage }] : undefined,
       type: "website",
       locale: isRu ? "ru_RU" : "uz_UZ",
     },
@@ -105,11 +107,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: ogTitle,
       description: ogDescription,
-      images:
-        service.og_image ||
-        settings?.default_og_image
-          ? [service.og_image || (settings?.default_og_image as string)]
-          : undefined,
+      images: ogImage ? [ogImage] : undefined,
     },
     robots: service.index
       ? {
@@ -181,6 +179,8 @@ export default async function ServicePage({
         .filter(Boolean)
     : [];
 
+  const heroImage = getPublicImageUrl(service.og_image);
+
   return (
     <main className="relative mx-auto max-w-6xl px-4 pb-16 pt-10 space-y-10">
       <script
@@ -232,11 +232,11 @@ export default async function ServicePage({
 
         {/* Картинка услуги, если есть */}
         <div className="relative">
-          {service.og_image ? (
+          {heroImage ? (
             <div className="overflow-hidden rounded-3xl border border-white/10 bg-black/60 shadow-[0_0_40px_rgba(0,0,0,0.8)]">
               <div className="relative h-52 w-full md:h-64">
                 <Image
-                  src={service.og_image}
+                  src={heroImage}
                   alt={title || "Service image"}
                   fill
                   className="object-cover"

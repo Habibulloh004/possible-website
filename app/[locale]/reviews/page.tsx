@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { isLocale, type Locale } from "@/lib/i18n";
+import { getPublicImageUrl } from "@/lib/images";
 
 // --- Dynamic SEO metadata with Prisma (aggregate rating, defaults, hreflang) ---
 export async function generateMetadata({ params }: { params: { locale: string } }) {
@@ -41,7 +42,8 @@ export async function generateMetadata({ params }: { params: { locale: string } 
 
   const baseUrl = `https://possible.uz/${locale}/reviews`;
   const ogImage =
-    settings?.default_og_image || "https://possible.uz/og-default.png";
+    getPublicImageUrl(settings?.default_og_image) ||
+    "https://possible.uz/og-default.png";
   const siteName = settings?.company_name || "Possible Group";
 
   return {

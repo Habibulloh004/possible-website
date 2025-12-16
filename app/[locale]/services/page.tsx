@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { isLocale, type Locale } from "@/lib/i18n";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { getPublicImageUrl } from "@/lib/images";
 
 export async function generateMetadata({
   params,
@@ -58,7 +59,9 @@ export async function generateMetadata({
     "do‘konlar tarmog‘ini avtomatlashtirish",
   ];
 
-  const ogImage = settings?.default_og_image || `${baseUrl}/og-default.png`;
+  const ogImage =
+    getPublicImageUrl(settings?.default_og_image) ||
+    `${baseUrl}/og-default.png`;
 
   return {
     title,
@@ -223,8 +226,15 @@ export default async function ServicesPage({
                     <div className="mb-4 overflow-hidden rounded-2xl border border-white/10 bg-black/60">
                       <div className="relative h-40 w-full">
                         <Image
-                          src={(s as any).og_image as string}
-                          alt={title || (isRu ? "Изображение услуги" : "Xizmat rasmi")}
+                          src={
+                            getPublicImageUrl(
+                              (s as any).og_image as string
+                            ) || "/og-default.png"
+                          }
+                          alt={
+                            title ||
+                            (isRu ? "Изображение услуги" : "Xizmat rasmi")
+                          }
                           fill
                           className="object-cover"
                           sizes="(min-width: 768px) 50vw, 100vw"

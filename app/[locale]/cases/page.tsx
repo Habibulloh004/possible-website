@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { isLocale, type Locale } from "@/lib/i18n";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { getPublicImageUrl } from "@/lib/images";
 
 const BASE_URL = "https://possible.uz";
 
@@ -97,7 +98,9 @@ export async function generateMetadata({
       locale: isRu ? "ru_UZ" : "uz_UZ",
       images: [
         {
-          url: settings?.default_og_image ?? `${BASE_URL}/og-default.png`,
+          url:
+            getPublicImageUrl(settings?.default_og_image) ||
+            `${BASE_URL}/og-default.png`,
           width: 1200,
           height: 630,
           alt: isRu
@@ -111,7 +114,8 @@ export async function generateMetadata({
       title: isRu ? title : title,
       description,
       images: [
-        settings?.default_og_image ?? `${BASE_URL}/og-default.png`,
+        getPublicImageUrl(settings?.default_og_image) ||
+          `${BASE_URL}/og-default.png`,
       ],
     },
   };
@@ -207,6 +211,27 @@ export default async function CasesPage({
           const description =
             ((c as any)[descriptionKey] as string | null) || "";
 
+          let previewSrc: string | undefined;
+          if (c.screenshots) {
+            const raw = c.screenshots.trim();
+            if (raw.startsWith("[")) {
+              try {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed) && typeof parsed[0] === "string") {
+                  previewSrc = parsed[0];
+                }
+              } catch {
+                // ignore invalid JSON and fallback to raw string
+              }
+            } else {
+              previewSrc = raw;
+            }
+          }
+
+          const resolvedPreview = previewSrc
+            ? getPublicImageUrl(previewSrc) || previewSrc
+            : undefined;
+
           return (
             <a
               key={c.id}
@@ -215,9 +240,9 @@ export default async function CasesPage({
             >
               {/* картинка */}
               <div className="relative h-40 w-full overflow-hidden border-b border-white/5 bg-gradient-to-tr from-emerald-500/20 via-neutral-900 to-indigo-500/20">
-                {c.screenshots ? (
+                {resolvedPreview ? (
                   <Image
-                    src={c.screenshots}
+                    src={resolvedPreview}
                     alt={title}
                     fill
                     className="object-cover transition duration-500 group-hover:scale-[1.03]"

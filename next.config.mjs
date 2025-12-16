@@ -1,8 +1,14 @@
-function parseHostname(value) {
+function parseHost(value, fallbackProtocol = "https") {
   if (!value) return null;
   try {
-    const maybeUrl = value.includes("://") ? value : `https://${value}`;
-    return new URL(maybeUrl).hostname || null;
+    const withProtocol = value.includes("://")
+      ? value
+      : `${fallbackProtocol}://${value}`;
+    const url = new URL(withProtocol);
+    return {
+      hostname: url.hostname,
+      protocol: url.protocol.replace(":", "") || "https",
+    };
   } catch {
     return null;
   }
@@ -11,34 +17,45 @@ function parseHostname(value) {
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-const defaultDomains = [
-  "localhost",
-  "127.0.0.1",
-  "possible.uz",
-  "www.possible.uz",
+const remoteHosts = new Map();
+
+function addHost(value, fallbackProtocol = "https") {
+  const parsed = parseHost(value, fallbackProtocol);
+  if (!parsed) return;
+  const existing = remoteHosts.get(parsed.hostname) ?? new Set();
+  existing.add(parsed.protocol);
+  remoteHosts.set(parsed.hostname, existing);
+}
+
+const defaultHosts = [
+  { value: "localhost", protocol: "http" },
+  { value: "127.0.0.1", protocol: "http" },
+  { value: "possible.uz", protocol: "https" },
+  { value: "www.possible.uz", protocol: "https" },
 ];
 
-const allowedDomains = new Set(defaultDomains);
-const siteHostname = parseHostname(siteUrl);
-if (siteHostname) {
-  allowedDomains.add(siteHostname);
-}
+defaultHosts.forEach(({ value, protocol }) => addHost(value, protocol));
+addHost(siteUrl);
 
 const extraHosts = process.env.NEXT_IMAGE_REMOTE_HOSTS || "";
 extraHosts
   .split(",")
   .map((value) => value.trim())
   .filter(Boolean)
-  .forEach((value) => {
-    const host = parseHostname(value) || value;
-    if (host) allowedDomains.add(host);
-  });
+  .forEach((value) => addHost(value));
+
+const remotePatterns = Array.from(remoteHosts.entries()).flatMap(
+  ([hostname, protocols]) =>
+    Array.from(protocols).map((protocol) => ({
+      protocol,
+      hostname,
+    }))
+);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    // Allow project and CDN hosts for <Image /> optimization
-    domains: Array.from(allowedDomains),
+    remotePatterns,
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60,
   },

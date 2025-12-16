@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { isLocale, type Locale } from "@/lib/i18n";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { getPublicImageUrl } from "@/lib/images";
 
 // SEO metadata
 export async function generateMetadata({
@@ -74,7 +75,8 @@ export async function generateMetadata({
       ];
 
   const ogImage =
-    settings?.default_og_image || "/og-default.png";
+    getPublicImageUrl(settings?.default_og_image) ||
+    "https://possible.uz/og-default.png";
 
   return {
     title,
@@ -213,7 +215,9 @@ export default async function BlogPage({
                   {p.og_image && (
                     <div className="relative h-44 w-full overflow-hidden border-b border-white/10 bg-neutral-900">
                       <Image
-                        src={p.og_image}
+                        src={
+                          getPublicImageUrl(p.og_image) || "/og-default.png"
+                        }
                         alt={title}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"

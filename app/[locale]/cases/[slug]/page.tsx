@@ -3,6 +3,7 @@ import { isLocale, type Locale } from "@/lib/i18n";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import type { Metadata, ResolvingMetadata } from "next";
+import { getPublicImageUrl } from "@/lib/images";
 
 export async function generateStaticParams() {
   const cases = await prisma.case.findMany({
@@ -64,6 +65,9 @@ export async function generateMetadata(
 
   const allowIndex = c.index ?? true;
 
+  const ogImage =
+    getPublicImageUrl(c.og_image) || "https://possible.uz/og-default.png";
+
   return {
     title: metaTitle || titleContent || "Кейс | Possible Group",
     description:
@@ -83,10 +87,10 @@ export async function generateMetadata(
         "Кейс по автоматизации бизнес-процессов.",
       url: canonical,
       type: "article",
-      images: c.og_image
+      images: ogImage
         ? [
             {
-              url: c.og_image,
+              url: ogImage,
             },
           ]
         : undefined,
@@ -138,6 +142,10 @@ export default async function CasePage({
     }
   }
 
+  const normalizedScreenshots = screenshots.map(
+    (src) => getPublicImageUrl(src) || src
+  );
+
   return (
     <div className="relative mx-auto max-w-6xl px-4 py-14 space-y-12">
       {/* фоновые акценты */}
@@ -184,10 +192,10 @@ export default async function CasePage({
           </div>
 
           {/* right: hero screenshot (если есть) */}
-          {screenshots[0] && (
+          {normalizedScreenshots[0] && (
             <div className="relative h-52 w-full overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/80">
               <Image
-                src={screenshots[0]}
+                src={normalizedScreenshots[0]}
                 alt={title}
                 fill
                 className="object-cover transition duration-500 hover:scale-[1.03]"

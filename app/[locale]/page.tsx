@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
+import { getPublicImageUrl } from "@/lib/images";
 
 type Locale = "ru" | "uz";
 
@@ -61,7 +62,9 @@ export async function generateMetadata({
     "Possible Group",
   ];
 
-  const ogImage = settings?.default_og_image || `${baseUrl}/og-default.png`;
+  const ogImage =
+    getPublicImageUrl(settings?.default_og_image) ||
+    `${baseUrl}/og-default.png`;
 
   return {
     title,

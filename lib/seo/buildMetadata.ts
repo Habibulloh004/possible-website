@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { Locale } from "../i18n";
 import type { SeoEntity } from "./seoTypes";
 import { prisma } from "../prisma";
+import { getPublicImageUrl } from "../images";
 
 export async function buildMetadata(
   locale: Locale,
@@ -34,6 +35,11 @@ export async function buildMetadata(
 
   const index = entity?.index ?? true;
 
+  const ogImage =
+    getPublicImageUrl(entity?.og_image) ||
+    getPublicImageUrl(settings?.default_og_image) ||
+    `${urlBase}/og-default.png`;
+
   return {
     title,
     description,
@@ -49,9 +55,7 @@ export async function buildMetadata(
       description: ogDescription,
       url,
       siteName: "Possible Group",
-      images: [
-        entity?.og_image || settings?.default_og_image || "/og-default.png"
-      ],
+      images: [{ url: ogImage }],
       type: "website"
     },
     robots: index
